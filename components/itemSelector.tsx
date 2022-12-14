@@ -1,9 +1,12 @@
 import { Avatar, Input, List, Select, Space } from 'antd';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { SelectProps } from 'antd';
-import useSWR from 'swr'
+import useSWR from 'swr';
 import axios from "axios";
 import { Item } from '../interface/item';
+import { useAtom } from 'jotai';
+import { itemSetStore } from '../store';
+import { ItemType } from '../interface/enums/itemType';
 const { Search } = Input;
 
 const ItemSelector: React.FC = () => {
@@ -16,11 +19,61 @@ const ItemSelector: React.FC = () => {
         });
     });
 
+    const [itemSetList, setItemSetList] = useAtom(itemSetStore);
     const [hashTags, setHashTags] = useState<string[]>([]);
-    const [keyword, setKeyword] = useState<string | null>(null);
-    const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+    const [keyword, setKeyword] = useState<string>('');
+
+    const fetcher = (url: string) => {
+        if (hashTags.length === 0 && !keyword) return [];
+        return axios.get(url).then((res) => res.data);
+    };
     const { data, error } = useSWR<Item[]>(`/api/search-items?itemName=${keyword}&hashTag=${hashTags.join(',')}`, fetcher);
 
+    const equipItem = (index: number, item: Item) => {
+        console.log('itemSetList', itemSetList);
+        const [itemType] = item.itemTypeDetail.split(' ').slice(-1);
+        switch (itemType) {
+            case ItemType.WEAPON:
+                itemSetList[index].weapon = item;
+                break;
+            case ItemType.JACKET:
+                itemSetList[index].jacket = item;
+                break;
+            case ItemType.SHOULDER:
+                itemSetList[index].shoulder = item;
+                break;
+            case ItemType.PANTS:
+                itemSetList[index].pants = item;
+                break;
+            case ItemType.SHOES:
+                itemSetList[index].shoes = item;
+                break;
+            case ItemType.WAIST:
+                itemSetList[index].waist = item;
+                break;
+            case ItemType.AMULET:
+                itemSetList[index].amulet = item;
+                break;
+            case ItemType.WRIST:
+                itemSetList[index].wrist = item;
+                break;
+            case ItemType.RING:
+                itemSetList[index].ring = item;
+                break;
+            case ItemType.SUPPORT:
+                itemSetList[index].support = item;
+                break;
+            case ItemType.MAGIC_STON:
+                itemSetList[index].magicStone = item;
+                break;
+            case ItemType.EARRING:
+                itemSetList[index].earRing = item;
+                break;
+            default:
+                throw new Error(`존재하지 않는 타입(${itemType})`);
+        }
+        setItemSetList(itemSetList);
+    };
     const onSearch = (value: string) => {
         console.log(`onSearch ${value}`);
         setKeyword(value);
@@ -29,6 +82,10 @@ const ItemSelector: React.FC = () => {
         console.log(`selected ${value}`);
         setHashTags(value);
     };
+    const handleClick = (item: Item) => {
+        console.log(item);
+        equipItem(0, item);
+    }
   
     return (
         <Space direction="vertical">
@@ -47,7 +104,10 @@ const ItemSelector: React.FC = () => {
                 bordered
                 dataSource={data}
                 renderItem={(item) => (
-                    <List.Item>
+                    <List.Item 
+                        style={{cursor: 'pointer'}}
+                        onClick={() => handleClick(item)}
+                    >
                         <List.Item.Meta
                             avatar={<Avatar src={`https://img-api.neople.co.kr/df/items/${item.itemId}`} shape='square' />}
                             title={item.itemName}

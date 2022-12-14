@@ -9,6 +9,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import ItemSelector from '../components/itemSelector';
+import { atom, useAtom } from 'jotai';
 
 const { Header, Content, Footer, Sider } = Layout;
 
