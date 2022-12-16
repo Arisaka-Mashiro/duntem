@@ -1,12 +1,13 @@
-import { Avatar, Input, List, Select, Space } from 'antd';
+import { Avatar, Button, Input, List, Select, Space } from 'antd';
 import { useState, useEffect } from "react";
 import type { SelectProps } from 'antd';
 import useSWR from 'swr';
 import axios from "axios";
 import { Item } from '../interface/item';
 import { useAtom } from 'jotai';
-import { itemSetStore } from '../store';
+import { itemSetStore, ITEM_SET_INIT_VALUE } from '../store';
 import { ItemType } from '../interface/enums/itemType';
+import { PlusOutlined } from '@ant-design/icons';
 const { Search } = Input;
 
 const ItemSelector: React.FC = () => {
@@ -29,6 +30,10 @@ const ItemSelector: React.FC = () => {
     };
     const { data, error } = useSWR<Item[]>(`/api/search-items?itemName=${keyword}&hashTag=${hashTags.join(',')}`, fetcher);
 
+    const addItemSet = () => {
+        setItemSetList([...itemSetList, ITEM_SET_INIT_VALUE]);
+        console.log('itemSetList', itemSetList);
+    };
     const equipItem = (index: number, item: Item) => {
         console.log('itemSetList', itemSetList);
         const [itemType] = item.itemTypeDetail.split(' ').slice(-1);
@@ -88,7 +93,14 @@ const ItemSelector: React.FC = () => {
     }
   
     return (
-        <Space direction="vertical">
+        <Space direction="vertical" style={{ paddingLeft: 16 }}>
+            <Button 
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={addItemSet}
+            >
+                아이템 세트 추가
+            </Button>
             <Select
                 mode="multiple"
                 allowClear

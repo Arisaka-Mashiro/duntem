@@ -10,6 +10,7 @@ import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import ItemSelector from '../components/itemSelector';
 import { atom, useAtom } from 'jotai';
+import ItemSetList from '../components/itemSetList';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -55,6 +56,7 @@ const App: React.FC = () => {
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
           </Breadcrumb> */}
           <div style={{ margin: 24, padding: 24, minHeight: 360, background: colorBgContainer }}>
+            <ItemSetList />
             <ItemSelector />
           </div>
         </Content>

@@ -14,3 +14,20 @@ export interface ItemSet {
     magicStone: Item | null;
     earRing: Item | null;
 };
+
+export function getItemList(itemSet: ItemSet) {
+    return [
+        itemSet.weapon,
+        itemSet.jacket,
+        itemSet.shoulder,
+        itemSet.pants,
+        itemSet.shoes,
+        itemSet.waist,
+        itemSet.amulet,
+        itemSet.wrist,
+        itemSet.ring,
+        itemSet.support,
+        itemSet.magicStone,
+        itemSet.earRing,
+    ]
+};
